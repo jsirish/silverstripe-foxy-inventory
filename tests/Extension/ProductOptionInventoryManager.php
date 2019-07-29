@@ -3,14 +3,23 @@
 namespace Dynamic\Foxy\Inventory\Extension;
 
 use Dynamic\Foxy\Orders\Model\OrderDetail;
-use SilverStripe\Forms\CheckboxField;
 use SilverStripe\Forms\FieldList;
+use SilverStripe\Forms\CheckboxField;
 use SilverStripe\Forms\NumericField;
 use SilverStripe\Forms\ReadonlyField;
 use SilverStripe\ORM\DataExtension;
 use UncleCheese\DisplayLogic\Forms\Wrapper;
 
-class ProductInventoryManager extends DataExtension
+/**
+ * Class FoxyStripeOptionInventoryManager
+ * @package Dynamic\FoxyStripe\ORM
+ *
+ * @property bool $ControlInventory
+ * @property int $PurchaseLimit
+ *
+ * @property-read \Dynamic\FoxyStripe\Model\OptionItem $owner
+ */
+class ProductOptionInventoryManager extends DataExtension
 {
     /**
      * @var array
@@ -25,11 +34,11 @@ class ProductInventoryManager extends DataExtension
      */
     public function updateCMSFields(FieldList $fields)
     {
-        $fields->removeByName([
+        $fields->removeByName(array(
             'PurchaseLimit',
             'EmbargoLimit',
             'NumberPurchased',
-        ]);
+        ));
 
         $fields->addFieldsToTab('Root.Inventory', array(
             CheckboxField::create('ControlInventory', 'Control Inventory?')
@@ -54,9 +63,9 @@ class ProductInventoryManager extends DataExtension
     /**
      * @return bool
      */
-    public function getIsProductAvailable()
+    public function getIsOptionAvailable()
     {
-        if ($this->owner->getHasInventory()) {
+        if ($this->getHasInventory()) {
             return $this->owner->PurchaseLimit > $this->getNumberPurchased();
         }
         return true;
@@ -67,7 +76,7 @@ class ProductInventoryManager extends DataExtension
      */
     public function getNumberAvailable()
     {
-        if ($this->getIsProductAvailable()) {
+        if ($this->getIsOptionAvailable()) {
             return (int)$this->owner->PurchaseLimit - (int)$this->getNumberPurchased();
         }
     }
@@ -79,14 +88,10 @@ class ProductInventoryManager extends DataExtension
     {
         $ct = 0;
         if ($this->getOrders()) {
-            /** @var OrderDetail $order */
             foreach ($this->getOrders() as $order) {
-                if ($order->OrderID !== 0) {
-                    $ct += $order->Quantity;
-                }
+                $ct += $order->Quantity;
             }
         }
-
         return $ct;
     }
 
@@ -96,8 +101,18 @@ class ProductInventoryManager extends DataExtension
     public function getOrders()
     {
         if ($this->owner->ID) {
-            return OrderDetail::get()->filter('ProductID', $this->owner->ID);
+            return OrderDetail::get()->filter('OrderOptions.ID', $this->owner->ID);
         }
         return false;
+    }
+
+    /**
+     * @param $available
+     */
+    public function updateOptionAvailability(&$available)
+    {
+        if ($this->getHasInventory()) {
+            $available = $this->getIsOptionAvailable();
+        }
     }
 }

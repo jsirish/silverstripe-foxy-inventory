@@ -1,0 +1,26 @@
+Dynamic\Foxy\Model\FoxyCategory:
+  default:
+    Code: 'DEFAULT'
+
+Dynamic\Foxy\Inventory\Test\TestOnly\Page\TestProduct:
+  one:
+    Title: 'Product One'
+    ControlInventory: 1
+    PurchaseLimit: 3
+    Price: '$10.00'
+
+Dynamic\Foxy\Orders\Model\Order:
+  one:
+    OrderTotal: '$20.00'
+
+Dynamic\Foxy\Model\OptionType:
+  default:
+    Title: 'Options'
+
+#Dynamic\Foxy\Inventory\Test\TestOnly\Model\TestOption:
+#  one:
+#    Title: 'Blue'
+#    ProductID: =>Dynamic\Foxy\Inventory\Test\TestOnly\Page\TestProduct.one
+#    ProductOptionGroupID: =>Dynamic\Foxy\Model\OptionType.default
+#  two:
+#    Title: 'Red'
