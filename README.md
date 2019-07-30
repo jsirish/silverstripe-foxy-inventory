@@ -28,6 +28,10 @@ Dynamic\Products\Page\Product:
   extensions:
     - Dynamic\Foxy\Inventory\Extension\ProductInventoryManager
     - Dynamic\Foxy\Inventory\Extension\ProductExpirationManager
+      
+Dynamic\Products\Page\ProductController:
+  extensions:
+    - Dynamic\Foxy\Inventory\Extension\ProductControllerExtension
   
 ```
 
