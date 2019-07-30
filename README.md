@@ -37,6 +37,10 @@ Also apply the following Extensions to Foxy classes:
 Dynamic\Foxy\Form\AddToCartForm:
   extensions:
     - Dynamic\Foxy\Inventory\Extension\AddToCartFormExtension
+      
+Dynamic\Foxy\Form\QuantityField:
+  extensions:
+    - Dynamic\Foxy\Inventory\Extension\QuantityFieldExtension
 
 ```
 
