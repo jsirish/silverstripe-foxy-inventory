@@ -31,6 +31,15 @@ Dynamic\Products\Page\Product:
   
 ```
 
+Also apply the following Extensions to Foxy classes:
+
+```yaml
+Dynamic\Foxy\Form\AddToCartForm:
+  extensions:
+    - Dynamic\Foxy\Inventory\Extension\AddToCartFormExtension
+
+```
+
 ## Maintainers
  *  [Dynamic](http://www.dynamicagency.com) (<dev@dynamicagency.com>)
  

@@ -8,6 +8,8 @@ Dynamic\Foxy\Inventory\Test\TestOnly\Page\TestProduct:
     ControlInventory: 1
     PurchaseLimit: 3
     Price: '$10.00'
+    CartExpiration: 1
+    ExpirationMinutes: 60
 
 Dynamic\Foxy\Orders\Model\Order:
   one:
