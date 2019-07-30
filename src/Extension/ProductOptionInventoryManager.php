@@ -3,22 +3,13 @@
 namespace Dynamic\Foxy\Inventory\Extension;
 
 use Dynamic\Foxy\Orders\Model\OrderDetail;
-use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\CheckboxField;
+use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\NumericField;
 use SilverStripe\Forms\ReadonlyField;
 use SilverStripe\ORM\DataExtension;
 use UncleCheese\DisplayLogic\Forms\Wrapper;
 
-/**
- * Class FoxyStripeOptionInventoryManager
- * @package Dynamic\FoxyStripe\ORM
- *
- * @property bool $ControlInventory
- * @property int $PurchaseLimit
- *
- * @property-read \Dynamic\FoxyStripe\Model\OptionItem $owner
- */
 class ProductOptionInventoryManager extends DataExtension
 {
     /**
@@ -36,7 +27,6 @@ class ProductOptionInventoryManager extends DataExtension
     {
         $fields->removeByName(array(
             'PurchaseLimit',
-            'EmbargoLimit',
             'NumberPurchased',
         ));
 
@@ -47,7 +37,7 @@ class ProductOptionInventoryManager extends DataExtension
                 NumericField::create('PurchaseLimit')
                     ->setTitle('Number Available')
                     ->setDescription('add to cart form will be disabled once number available equals purchased'),
-                ReadonlyField::create('NumberPurchased', 'Purchased', $this->getNumberPurchased())//,
+                ReadonlyField::create('NumberPurchased', 'Purchased', $this->getNumberPurchased())
             )->displayIf('ControlInventory')->isChecked()->end(),
         ));
     }

@@ -17,10 +17,10 @@ Dynamic\Foxy\Model\OptionType:
   default:
     Title: 'Options'
 
-#Dynamic\Foxy\Inventory\Test\TestOnly\Model\TestOption:
-#  one:
-#    Title: 'Blue'
-#    ProductID: =>Dynamic\Foxy\Inventory\Test\TestOnly\Page\TestProduct.one
-#    ProductOptionGroupID: =>Dynamic\Foxy\Model\OptionType.default
-#  two:
-#    Title: 'Red'
+Dynamic\Foxy\Inventory\Test\TestOnly\Model\TestProductOption:
+  one:
+    Title: 'Blue'
+    ProductID: =>Dynamic\Foxy\Inventory\Test\TestOnly\Page\TestProduct.one
+    ProductOptionGroupID: =>Dynamic\Foxy\Model\OptionType.default
+  two:
+    Title: 'Red'
