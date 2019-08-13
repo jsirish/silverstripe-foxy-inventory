@@ -3,6 +3,7 @@
 namespace Dynamic\Foxy\Inventory\Extension;
 
 use Dynamic\Foxy\Inventory\Model\CartReservation;
+use Dynamic\Foxy\Model\FoxyHelper;
 use SilverStripe\CMS\Model\SiteTree;
 use SilverStripe\Control\Controller;
 use SilverStripe\Control\HTTPRequest;
@@ -66,8 +67,8 @@ class ProductControllerExtension extends Extension
      */
     protected function addProductReservation($code, $id, $expires)
     {
-        $product = SiteTree::get()->filter('Code', $code)->first();
-        // todo: determine way to query products now that any site tree can be a product
+        $helper = FoxyHelper::create();
+        $product = $helper->getProducts()->filter('Code', $code)->first();
 
         $reservation = CartReservation::create();
         $reservation->ReservationCode = $this->getReservationHash($code, $id, $expires);

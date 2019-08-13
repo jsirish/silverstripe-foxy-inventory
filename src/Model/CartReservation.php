@@ -2,6 +2,7 @@
 
 namespace Dynamic\Foxy\Inventory\Model;
 
+use Dynamic\Foxy\Model\FoxyHelper;
 use SilverStripe\CMS\Model\SiteTree;
 use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\ReadonlyField;
@@ -78,7 +79,8 @@ class CartReservation extends DataObject
     {
         parent::onBeforeWrite();
         if (!$this->ProductID) {
-            if ($product = SiteTree::get()->filter('Code', $this->Code)->first()) {
+            $helper = FoxyHelper::create();
+            if ($product = $helper->getProducts()->filter('Code', $this->Code)->first()) {
                 $this->ProductID = $product->ID;
             }
         }
