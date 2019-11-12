@@ -1,11 +1,20 @@
 # Changelog
 
+## [1.0.1](https://github.com/dynamic/silverstripe-foxy-inventory/tree/1.0.1) (2019-11-11)
+
+[Full Changelog](https://github.com/dynamic/silverstripe-foxy-inventory/compare/1.0.0...1.0.1)
+
+**Merged pull requests:**
+
+- FEATURE CMS design - hide fields unless Available is checked [\#13](https://github.com/dynamic/silverstripe-foxy-inventory/pull/13) ([jsirish](https://github.com/jsirish))
+
 ## [1.0.0](https://github.com/dynamic/silverstripe-foxy-inventory/tree/1.0.0) (2019-10-30)
 
 [Full Changelog](https://github.com/dynamic/silverstripe-foxy-inventory/compare/bcbdec143fbd3f83f3b13beae308719994d07651...1.0.0)
 
 **Merged pull requests:**
 
+- CHANGELOG 1.0.0 [\#11](https://github.com/dynamic/silverstripe-foxy-inventory/pull/11) ([jsirish](https://github.com/jsirish))
 - REFACTOR Use new FoxyHelper getProducts\(\) method [\#10](https://github.com/dynamic/silverstripe-foxy-inventory/pull/10) ([jsirish](https://github.com/jsirish))
 - FEATURE ProductControllerExtension [\#9](https://github.com/dynamic/silverstripe-foxy-inventory/pull/9) ([jsirish](https://github.com/jsirish))
 - FEATURE QuantityFIeldExtension [\#8](https://github.com/dynamic/silverstripe-foxy-inventory/pull/8) ([jsirish](https://github.com/jsirish))
