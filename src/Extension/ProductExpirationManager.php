@@ -10,6 +10,7 @@ use SilverStripe\Forms\GridField\GridFieldConfig_RecordViewer;
 use SilverStripe\Forms\NumericField;
 use SilverStripe\ORM\DataExtension;
 use SilverStripe\ORM\ValidationResult;
+use UncleCheese\DisplayLogic\Forms\Wrapper;
 
 class ProductExpirationManager extends DataExtension
 {
@@ -57,7 +58,9 @@ class ProductExpirationManager extends DataExtension
         }
         $fields->addFieldsToTab(
             'Root.Inventory',
-            $expirationFields
+            Wrapper::create(
+                $expirationFields
+            )->displayIf('Available')->isChecked()->end()
         );
     }
 
