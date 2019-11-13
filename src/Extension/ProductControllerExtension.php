@@ -17,7 +17,7 @@ class ProductControllerExtension extends Extension
      */
     public function onAfterInit()
     {
-        Requirements::javascript('dynamic/silverstripe-foxy-inventory: client/dist/javascript/scripts.min.js');
+        Requirements::javascript('dynamic/silverstripe-foxy-inventory: client/dist/javascript/inventory.js');
     }
 
     /**

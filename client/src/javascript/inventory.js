@@ -21,23 +21,27 @@ var prepareBase = function (url) {
         return prepareBase(base);
     };
 
+FC.onLoad = (function (_super) {
+    return function () {
+        if (typeof _super !== 'undefined') {
+            _super.apply(this, arguments);
+        }
 
-var FC = FC || {};
-FC.onLoad = function () {
-    FC.client.on('cart-submit.done', function () {
-        FC.client.request('https://' + FC.settings.storedomain + '/cart?output=json').done(function (dataJSON) {
-            jQuery.each(dataJSON.items, function (key, product) {
-                if (product.expires > 0) {
-                    var code = product.parent_code === '' ? product.code : product.parent_code;
+        FC.client.on('cart-submit.done', function () {
+            FC.client.request('https://' + FC.settings.storedomain + '/cart?output=json').done(function (dataJSON) {
+                jQuery.each(dataJSON.items, function (key, product) {
+                    if (product.expires > 0) {
+                        var code = product.parent_code === '' ? product.code : product.parent_code;
 
-                    jQuery.ajax({
-                        url: fetchBase() + '/reserveproduct/?code=' + code + '&id=' + product.id + '&expires=' + product.expires,
-                        success: function (data) {
-                            //console.log(data);
-                        }
-                    });//*/
-                }
+                        jQuery.ajax({
+                            url: fetchBase() + '/reserveproduct/?code=' + code + '&id=' + product.id + '&expires=' + product.expires,
+                            success: function (data) {
+                                //console.log(data);
+                            },
+                        });
+                    }
+                });
             });
         });
-    });
-};
+    }
+})(FC.onLoad);
