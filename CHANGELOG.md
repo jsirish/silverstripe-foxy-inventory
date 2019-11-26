@@ -1,6 +1,15 @@
 # Changelog
 
-## [1.0.1](https://github.com/dynamic/silverstripe-foxy-inventory/tree/1.0.1) (2019-11-11)
+## [1.0.2](https://github.com/dynamic/silverstripe-foxy-inventory/tree/1.0.2) (2019-11-26)
+
+[Full Changelog](https://github.com/dynamic/silverstripe-foxy-inventory/compare/1.0.1...1.0.2)
+
+**Merged pull requests:**
+
+- Bugfic/fc object [\#14](https://github.com/dynamic/silverstripe-foxy-inventory/pull/14) ([mak001](https://github.com/mak001))
+- Fixed missing gulp script for minifying [\#12](https://github.com/dynamic/silverstripe-foxy-inventory/pull/12) ([mak001](https://github.com/mak001))
+
+## [1.0.1](https://github.com/dynamic/silverstripe-foxy-inventory/tree/1.0.1) (2019-11-12)
 
 [Full Changelog](https://github.com/dynamic/silverstripe-foxy-inventory/compare/1.0.0...1.0.1)
 
