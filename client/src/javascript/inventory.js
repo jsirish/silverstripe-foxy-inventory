@@ -21,6 +21,8 @@ var prepareBase = function (url) {
         return prepareBase(base);
     };
 
+
+var FC = FC || {};
 FC.onLoad = (function (_super) {
     return function () {
         if (typeof _super !== 'undefined') {
@@ -33,6 +35,7 @@ FC.onLoad = (function (_super) {
                     if (product.expires > 0) {
                         var code = product.parent_code === '' ? product.code : product.parent_code;
 
+
                         jQuery.ajax({
                             url: fetchBase() + '/reserveproduct/?code=' + code + '&id=' + product.id + '&expires=' + product.expires,
                             success: function (data) {
@@ -43,5 +46,5 @@ FC.onLoad = (function (_super) {
                 });
             });
         });
-    }
+    };
 })(FC.onLoad);
