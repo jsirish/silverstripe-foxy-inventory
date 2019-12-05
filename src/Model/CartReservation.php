@@ -8,6 +8,7 @@ use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\ReadonlyField;
 use SilverStripe\ORM\DataObject;
 use SilverStripe\Security\Permission;
+use SilverStripe\Security\Security;
 
 class CartReservation extends DataObject
 {
@@ -30,7 +31,7 @@ class CartReservation extends DataObject
      * @var array
      */
     private static $db = [
-        'ReservationCode' => 'Varchar(255)',
+        //'ReservationCode' => 'Varchar(255)',
         'ProductID' => 'Int',
         'CartProductID' => 'Int',
         'Code' => 'Varchar(255)',
@@ -41,12 +42,12 @@ class CartReservation extends DataObject
     /**
      * @var array
      */
-    private static $indexes = [
+    /*private static $indexes = [
         'foxy-reservation-code' => [
             'type' => 'unique',
             'columns' => ['ReservationCode'],
         ],
-    ];
+    ];//*/
 
     /**
      * @var array
@@ -106,7 +107,7 @@ class CartReservation extends DataObject
      */
     public function canDelete($member = null)
     {
-        return Permission::check('ADMIN', 'any', \Security::getCurrentUser());
+        return Permission::check('ADMIN', 'any', Security::getCurrentUser());
     }
 
     /**

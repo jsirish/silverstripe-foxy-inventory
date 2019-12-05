@@ -42,6 +42,8 @@ class ProductControllerExtension extends Extension
 
     /**
      * @param HTTPRequest $request
+     * @return bool|void
+     * @throws \SilverStripe\ORM\ValidationException
      */
     public function reserveproduct(HTTPRequest $request)
     {
@@ -55,9 +57,9 @@ class ProductControllerExtension extends Extension
             return false;
         }
 
-        if (!$this->isProductReserved($code, $id, $expires)) {
+        //if (!$this->isProductReserved($code, $id, $expires)) {
             $this->addProductReservation($code, $id, $expires, $quantity, $cart);
-        }
+        //}
     }
 
     /**
@@ -88,11 +90,12 @@ class ProductControllerExtension extends Extension
             if ($remaining > 0) {
                 for ($i = 0; $i < $remaining; $i++) {
                     $reservation = CartReservation::create();
-                    $reservation->ReservationCode = $this->getReservationHash($code, $id, $expires);
+                    //$reservation->ReservationCode = $this->getReservationHash($code, $id, $expires, $cart);
                     $reservation->CartProductID = $id;
                     $reservation->Code = $code;
                     $reservation->Expires = date('Y-m-d H:i:s', $expires);
                     $reservation->ProductID = $product->ID;
+                    $reservation->Cart = $cart;
 
                     $reservation->write();
                 }
@@ -117,8 +120,8 @@ class ProductControllerExtension extends Extension
      * @param $expires
      * @return string
      */
-    protected function getReservationHash($code, $id, $expires)
+    protected function getReservationHash($code, $id, $expires, $cart)
     {
-        return md5($code . $id . $expires);
+        return md5($code . $id . $expires . $cart . rand());
     }
 }

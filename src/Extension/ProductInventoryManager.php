@@ -2,12 +2,14 @@
 
 namespace Dynamic\Foxy\Inventory\Extension;
 
+use Dynamic\Foxy\Inventory\Model\CartReservation;
 use Dynamic\Foxy\Orders\Model\OrderDetail;
 use SilverStripe\Forms\CheckboxField;
 use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\NumericField;
 use SilverStripe\Forms\ReadonlyField;
 use SilverStripe\ORM\DataExtension;
+use SilverStripe\ORM\DataList;
 use UncleCheese\DisplayLogic\Forms\Wrapper;
 
 class ProductInventoryManager extends DataExtension
@@ -39,7 +41,8 @@ class ProductInventoryManager extends DataExtension
                     NumericField::create('PurchaseLimit')
                         ->setTitle('Number Available')
                         ->setDescription('add to cart form will be disabled once number available equals purchased'),
-                    ReadonlyField::create('NumberPurchased', 'Purchased', $this->getNumberPurchased())//,
+                    ReadonlyField::create('NumberAvailable', 'Remaining Available', $this->getNumberAvailable())
+                        ->setDescription('This takes into account products added to the cart. Products removed from the cart may persist in the "Cart Reservations" until the expiration time.')//,
                 )->displayIf('ControlInventory')->isChecked()->end()
             )->displayIf('Available')->isChecked()->end()
         ));
@@ -59,19 +62,18 @@ class ProductInventoryManager extends DataExtension
     public function getIsProductAvailable()
     {
         if ($this->owner->getHasInventory()) {
-            return $this->owner->PurchaseLimit > $this->getNumberPurchased();
+            return $this->owner->PurchaseLimit > $this->getNumberAvailable();
         }
+
         return true;
     }
 
     /**
-     * @return int
+     * @return int|void
      */
     public function getNumberAvailable()
     {
-        if ($this->getIsProductAvailable()) {
-            return (int)$this->owner->PurchaseLimit - (int)$this->getNumberPurchased();
-        }
+        return (int)$this->owner->PurchaseLimit - (int)$this->getNumberPurchased() - (int)$this->getCartReservations()->count();
     }
 
     /**
@@ -93,13 +95,25 @@ class ProductInventoryManager extends DataExtension
     }
 
     /**
-     * @return DataList
+     * @return DataList|bool
      */
     public function getOrders()
     {
         if ($this->owner->ID) {
             return OrderDetail::get()->filter('ProductID', $this->owner->ID);
         }
+
         return false;
+    }
+
+    /**
+     * @return DataList
+     */
+    public function getCartReservations()
+    {
+        $reservations = CartReservation::get()->filter('ProductID', $this->owner->ID)
+            ->filter('Expires:GreaterThan', date('Y-m-d H:i:s', strtotime('now')));
+
+        return $reservations;
     }
 }
