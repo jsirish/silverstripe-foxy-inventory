@@ -31,16 +31,10 @@ class CartReservation extends DataObject
      */
     private static $db = [
         'ReservationCode' => 'Varchar(255)',
+        'ProductID' => 'Int',
         'CartProductID' => 'Int',
         'Code' => 'Varchar(255)',
         'Expires' => 'DBDatetime',
-    ];
-
-    /**
-     * @var array
-     */
-    private static $has_one = [
-        'Product' => SiteTree::class,
     ];
 
     /**

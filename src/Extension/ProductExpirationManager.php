@@ -23,13 +23,6 @@ class ProductExpirationManager extends DataExtension
     ];
 
     /**
-     * @var array
-     */
-    private static $has_many = [
-        'CartReservations' => CartReservation::class,
-    ];
-
-    /**
      * @param FieldList $fields
      */
     public function updateCMSFields(FieldList $fields)
@@ -44,11 +37,11 @@ class ProductExpirationManager extends DataExtension
                 ),
         ];
         $duration->displayIf('CartExpiration')->isChecked()->end();
-        if ($this->owner->CartReservations()->exists()) {
+        if ($this->owner->getCartReservations()->exists()) {
             $expirationGrid = GridField::create(
                 'CartReservations',
                 'Cart Reservations',
-                $this->owner->CartReservations()
+                $this->owner->getCartReservations()
                     ->filter('Expires:GreaterThan', date('Y-m-d H:i:s', strtotime('now')))
                     ->sort('Created'),
                 $cartResConfig = GridFieldConfig_RecordViewer::create()
@@ -62,6 +55,17 @@ class ProductExpirationManager extends DataExtension
                 $expirationFields
             )->displayIf('Available')->isChecked()->end()
         );
+
+        if ($this->getCartReservations()) {
+            $expirationGrid = GridField::create(
+                'CartReservations',
+                'Cart Reservations',
+                $this->getCartReservations()->sort('Created'),
+                $cartResConfig = GridFieldConfig_RecordViewer::create()
+            );
+            $expirationGrid->displayIf('ControlInventory')->isChecked()->end();
+            $fields->addFieldToTab('Root.Inventory', $expirationGrid);
+        }
     }
 
     /**
@@ -76,5 +80,15 @@ class ProductExpirationManager extends DataExtension
                     'You must set the "Expiration In Minutes" or disable "Cart Product Expiration"'
                 );
         }
+    }
+
+    /**
+     * @return int
+     */
+    public function getCartReservations()
+    {
+        $reservations = CartReservation::get()->filter('ProductID', $this->owner->ID)
+            ->filter('Expires:GreaterThan', date('Y-m-d H:i:s', strtotime('now')));
+        return $reservations;
     }
 }
