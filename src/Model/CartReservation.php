@@ -35,6 +35,7 @@ class CartReservation extends DataObject
         'CartProductID' => 'Int',
         'Code' => 'Varchar(255)',
         'Expires' => 'DBDatetime',
+        'Cart' => 'Varchar(255)',
     ];
 
     /**
