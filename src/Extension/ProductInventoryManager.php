@@ -2,9 +2,12 @@
 
 namespace Dynamic\Foxy\Inventory\Extension;
 
+use Dynamic\Foxy\Inventory\Model\CartReservation;
 use Dynamic\Foxy\Orders\Model\OrderDetail;
 use SilverStripe\Forms\CheckboxField;
 use SilverStripe\Forms\FieldList;
+use SilverStripe\Forms\GridField\GridField;
+use SilverStripe\Forms\GridField\GridFieldConfig_RecordViewer;
 use SilverStripe\Forms\NumericField;
 use SilverStripe\Forms\ReadonlyField;
 use SilverStripe\ORM\DataExtension;
@@ -19,6 +22,16 @@ class ProductInventoryManager extends DataExtension
         'ControlInventory' => 'Boolean',
         'PurchaseLimit' => 'Int',
     ];
+
+    /**
+     * @var
+     */
+    private $number_available;
+
+    /**
+     * @var
+     */
+    private $number_purchased;
 
     /**
      * @param FieldList $fields
@@ -43,6 +56,18 @@ class ProductInventoryManager extends DataExtension
                 )->displayIf('ControlInventory')->isChecked()->end()
             )->displayIf('Available')->isChecked()->end()
         ));
+
+        if ($this->getCartReservations()) {
+            $expirationGrid = GridField::create(
+                'CartReservations',
+                'Cart Reservations',
+                $this->getCartReservations()->sort('Created'),
+                $cartResConfig = GridFieldConfig_RecordViewer::create()
+            );
+            $expirationGrid->displayIf('ControlInventory')->isChecked()->end();
+
+            $fields->addFieldToTab('Root.Inventory', $expirationGrid);
+        }
     }
 
     /**
@@ -59,9 +84,11 @@ class ProductInventoryManager extends DataExtension
     public function getIsProductAvailable()
     {
         if ($this->owner->getHasInventory()) {
-            return $this->owner->PurchaseLimit > $this->getNumberPurchased();
+            return $this->owner->getNumberPurchased() <= $this->owner->PurchaseLimit;
+        } else if ($this->owner->isAvailable()) {
+            return true;
         }
-        return true;
+        return false;
     }
 
     /**
@@ -69,15 +96,41 @@ class ProductInventoryManager extends DataExtension
      */
     public function getNumberAvailable()
     {
-        if ($this->getIsProductAvailable()) {
-            return (int)$this->owner->PurchaseLimit - (int)$this->getNumberPurchased();
+        if (!$this->number_available) {
+            $this->setNumberAvailable();
         }
+
+        return $this->number_available;
+    }
+
+    /**
+     * @return $this
+     */
+    public function setNumberAvailable()
+    {
+        if ($this->getIsProductAvailable()) {
+            $this->number_available =  (int)$this->owner->PurchaseLimit - (int)$this->getNumberPurchased();
+        }
+
+        return $this;
     }
 
     /**
      * @return int
      */
     public function getNumberPurchased()
+    {
+        if (!$this->number_purchased) {
+            $this->setNumberPurchased();
+        }
+
+        return $this->number_purchased;
+    }
+
+    /**
+     * @return $this
+     */
+    public function setNumberPurchased()
     {
         $ct = 0;
         if ($this->getOrders()) {
@@ -88,8 +141,15 @@ class ProductInventoryManager extends DataExtension
                 }
             }
         }
+        if ($this->getCartReservations()) {
+            foreach ($this->getCartReservations() as $reservation) {
+                $ct += 1;
+            }
+        }
 
-        return $ct;
+        $this->number_purchased = $ct;
+
+        return $this;
     }
 
     /**
@@ -101,5 +161,16 @@ class ProductInventoryManager extends DataExtension
             return OrderDetail::get()->filter('ProductID', $this->owner->ID);
         }
         return false;
+    }
+
+    /**
+     * @return int
+     */
+    public function getCartReservations()
+    {
+        $reservations = CartReservation::get()->filter('ProductID', $this->owner->ID)
+            ->filter('Expires:GreaterThan', date('Y-m-d H:i:s', strtotime('now')));
+
+        return $reservations;
     }
 }

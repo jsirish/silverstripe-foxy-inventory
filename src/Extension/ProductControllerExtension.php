@@ -68,18 +68,22 @@ class ProductControllerExtension extends Extension
     protected function addProductReservation($code, $id, $expires)
     {
         $helper = FoxyHelper::create();
-        $product = $helper->getProducts()->filter('Code', $code)->first();
+        $products = $helper->getProducts();
 
-        $reservation = CartReservation::create();
-        $reservation->ReservationCode = $this->getReservationHash($code, $id, $expires);
-        $reservation->CartProductID = $id;
-        $reservation->Code = $code;
-        $reservation->Expires = date('Y-m-d H:i:s', $expires);
-        if ($product !== null) {
+        $codeFilter = function (\Page $page) use ($code) {
+            return $page->Code == $code;
+        };
+
+        if ($product = FoxyHelper::singleton()->getProducts()->filterByCallback($codeFilter)->first()) {
+            $reservation = CartReservation::create();
+            $reservation->ReservationCode = $this->getReservationHash($code, $id, $expires);
+            $reservation->CartProductID = $id;
+            $reservation->Code = $code;
+            $reservation->Expires = date('Y-m-d H:i:s', $expires);
             $reservation->ProductID = $product->ID;
-        }
 
-        return $reservation->write() > 0;
+            return $reservation->write() > 0;
+        }
     }
 
     /**

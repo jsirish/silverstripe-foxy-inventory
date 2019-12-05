@@ -23,13 +23,6 @@ class ProductExpirationManager extends DataExtension
     ];
 
     /**
-     * @var array
-     */
-    private static $has_many = [
-        'CartReservations' => CartReservation::class,
-    ];
-
-    /**
      * @param FieldList $fields
      */
     public function updateCMSFields(FieldList $fields)
@@ -44,18 +37,7 @@ class ProductExpirationManager extends DataExtension
                 ),
         ];
         $duration->displayIf('CartExpiration')->isChecked()->end();
-        if ($this->owner->CartReservations()->exists()) {
-            $expirationGrid = GridField::create(
-                'CartReservations',
-                'Cart Reservations',
-                $this->owner->CartReservations()
-                    ->filter('Expires:GreaterThan', date('Y-m-d H:i:s', strtotime('now')))
-                    ->sort('Created'),
-                $cartResConfig = GridFieldConfig_RecordViewer::create()
-            );
-            $expirationGrid->displayIf('CartExpiration')->isChecked()->end();
-            $expirationFields[] = $expirationGrid;
-        }
+
         $fields->addFieldsToTab(
             'Root.Inventory',
             Wrapper::create(

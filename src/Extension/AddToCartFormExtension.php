@@ -58,14 +58,8 @@ class AddToCartFormExtension extends Extension
         if (!$this->owner->getProduct()->ControlInventory) {
             return false;
         }
-        $reserved = CartReservation::get()
-            ->filter([
-                'Code' => $this->owner->getProduct()->Code,
-                'Expires:GreaterThan' => date('Y-m-d H:i:s', strtotime('now')),
-            ])->count();
-        $sold = $this->owner->getProduct()->getNumberPurchased();
 
-        if ($reserved + $sold >= $this->owner->getProduct()->PurchaseLimit) {
+        if (!$this->owner->getProduct()->getIsProductAvailable()) {
             return true;
         }
 

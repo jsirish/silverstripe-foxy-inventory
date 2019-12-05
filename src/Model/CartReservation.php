@@ -8,6 +8,7 @@ use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\ReadonlyField;
 use SilverStripe\ORM\DataObject;
 use SilverStripe\Security\Permission;
+use SilverStripe\Security\Security;
 
 class CartReservation extends DataObject
 {
@@ -31,16 +32,10 @@ class CartReservation extends DataObject
      */
     private static $db = [
         'ReservationCode' => 'Varchar(255)',
+        'ProductID' => 'Int',
         'CartProductID' => 'Int',
         'Code' => 'Varchar(255)',
         'Expires' => 'DBDatetime',
-    ];
-
-    /**
-     * @var array
-     */
-    private static $has_one = [
-        'Product' => SiteTree::class,
     ];
 
     /**
@@ -67,7 +62,14 @@ class CartReservation extends DataObject
     public function getCMSFields()
     {
         $this->beforeUpdateCMSFields(function (FieldList $fields) {
-            $fields->addFieldToTab('Root.Main', ReadonlyField::create('ReservationCode')->setTitle('Reservation Code'));
+            $fields->addFieldToTab(
+                'Root.Main',
+                ReadonlyField::create('ReservationCode')->setTitle('Reservation Code')
+            );
+            $fields->replaceField(
+                'ProductID',
+                ReadonlyField::create('ProductID', 'Product ID')
+            );
         });
         return parent::getCMSFields();
     }
@@ -111,7 +113,7 @@ class CartReservation extends DataObject
      */
     public function canDelete($member = null)
     {
-        return Permission::check('ADMIN', 'any', \Security::getCurrentUser());
+        return Permission::check('ADMIN', 'any', Security::getCurrentUser());
     }
 
     /**
