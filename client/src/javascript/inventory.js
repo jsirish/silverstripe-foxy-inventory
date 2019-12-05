@@ -37,7 +37,9 @@ FC.onLoad = (function (_super) {
 
 
                         jQuery.ajax({
-                            url: fetchBase() + '/reserveproduct/?code=' + code + '&id=' + product.id + '&expires=' + product.expires,
+                            url: fetchBase() + '/reserveproduct/?code=' + code + '&id=' + product.id +
+                              '&quantity=' + product.quantity + '&expires=' + product.expires +
+                              '&cart=' + FC.json.session_id,
                             success: function (data) {
                                 //console.log(data);
                             },
