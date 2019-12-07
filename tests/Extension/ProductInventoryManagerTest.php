@@ -2,10 +2,14 @@
 
 namespace Dynamic\Foxy\Inventory\Test\Extension;
 
+use Dynamic\Foxy\Extension\Purchasable;
+use Dynamic\Foxy\Inventory\Extension\ProductExpirationManager;
+use Dynamic\Foxy\Inventory\Extension\ProductInventoryManager;
 use Dynamic\Foxy\Inventory\Test\TestOnly\Page\TestProduct;
 use Dynamic\Foxy\Inventory\Test\TestOnly\Page\TestProductController;
 use Dynamic\Foxy\Orders\Model\Order;
 use Dynamic\Foxy\Orders\Model\OrderDetail;
+use SilverStripe\Core\Config\Config;
 use SilverStripe\Dev\SapphireTest;
 use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\Form;
@@ -15,9 +19,9 @@ class ProductInventoryManagerTest extends SapphireTest
     /**
      * @var array
      */
-    protected static $fixture_file = array(
+    protected static $fixture_file = [
         '../fixtures.yml',
-    );
+    ];
 
     /**
      * @var array
@@ -29,9 +33,30 @@ class ProductInventoryManagerTest extends SapphireTest
     /**
      * @var array
      */
+    protected static $required_extensions = [
+        TestProduct::class => [
+            Purchasable::class,
+            ProductInventoryManager::class,
+            ProductExpirationManager::class,
+        ],
+    ];
+
+    /**
+     * @var array
+     */
     protected static $extra_controllers = [
         TestProductController::class,
     ];
+
+    /**
+     *
+     */
+    protected function setUp()
+    {
+        parent::setUp();
+
+        Config::modify()->set('Dynamic\\Foxy\\SingleSignOn\\Client\\CustomerClient', 'foxy_sso_enabled', false);
+    }
 
     /**
      *

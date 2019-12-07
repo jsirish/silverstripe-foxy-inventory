@@ -83,13 +83,12 @@ class ProductExpirationManager extends DataExtension
     }
 
     /**
-     * @return int
+     * @return \SilverStripe\ORM\DataList
      */
     public function getCartReservations()
     {
-        $reservations = CartReservation::get()->filter('ProductID', $this->owner->ID)
+        return CartReservation::get()
+            ->filter('ProductID', $this->owner->ID)
             ->filter('Expires:GreaterThan', date('Y-m-d H:i:s', strtotime('now')));
-
-        return $reservations;
     }
 }

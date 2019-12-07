@@ -2,8 +2,13 @@
 
 namespace Dynamic\Foxy\Inventory\Test\Extension;
 
+use Dynamic\Foxy\Extension\Purchasable;
+use Dynamic\Foxy\Inventory\Extension\ProductExpirationManager;
+use Dynamic\Foxy\Inventory\Extension\ProductInventoryManager;
+use Dynamic\Foxy\Inventory\Extension\ProductOptionInventoryManager;
 use Dynamic\Foxy\Inventory\Test\TestOnly\Model\TestProductOption;
 use Dynamic\Foxy\Inventory\Test\TestOnly\Page\TestProduct;
+use SilverStripe\Core\Config\Config;
 use SilverStripe\Dev\SapphireTest;
 use SilverStripe\Forms\FieldList;
 
@@ -21,6 +26,31 @@ class ProductOptionInventoryManagerTest extends SapphireTest
         TestProduct::class,
         TestProductOption::class,
     ];
+
+    /**
+     * @var array
+     */
+    protected static $required_extensions = [
+        TestProduct::class => [
+            Purchasable::class,
+            ProductInventoryManager::class,
+            ProductExpirationManager::class,
+        ],
+        TestProductOption::class => [
+            ProductOptionInventoryManager::class,
+        ],
+    ];
+
+    /**
+     *
+     */
+    protected function setUp()
+    {
+        parent::setUp();
+
+        Config::modify()->set('Dynamic\\Foxy\\SingleSignOn\\Client\\CustomerClient', 'foxy_sso_enabled', false);
+    }
+
     /**
      *
      */
@@ -51,6 +81,7 @@ class ProductOptionInventoryManagerTest extends SapphireTest
         $option->PurchaseLimit = 10;
         $this->assertTrue($option->getHasInventory());
     }
+
     /**
      *
      */
@@ -82,6 +113,7 @@ class ProductOptionInventoryManagerTest extends SapphireTest
         $this->assertFalse($option->getIsOptionAvailable());
         $detail->delete();
     }
+
     /**
      *
      */
@@ -99,6 +131,7 @@ class ProductOptionInventoryManagerTest extends SapphireTest
         $this->assertEquals(10, $option->getNumberPurchased());
         $detail->delete();
     }
+
     /**
      *
      */
