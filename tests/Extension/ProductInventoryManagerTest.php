@@ -113,24 +113,30 @@ class ProductInventoryManagerTest extends SapphireTest
         // no inventory control
         $product->ControlInventory = false;
         $product->PurchaseLimit = 0;
+        $product->write();
+
+        $product = TestProduct::get()->byID($product->ID);
+
         $this->assertTrue($product->getIsProductAvailable());
-        // inventory control, no limit
-        $product->ControlInventory = true;
-        $product->PurchaseLimit = 0;
-        $this->assertTrue($product->getIsProductAvailable());
+
         // inventory control, with limit
         $product->ControlInventory = true;
         $product->PurchaseLimit = 10;
+        $product->write();
+        $product = TestProduct::get()->byID($product->ID);
+
         $this->assertTrue($product->getIsProductAvailable());
+
         /** @var OrderDetail $detail */
         $detail = OrderDetail::create();
         $detail->OrderID = $this->objFromFixture(Order::class, 'one')->ID;
         $detail->Quantity = 10;
         $detail->ProductID = $product->ID;
         $detail->write();
+
+        $product = TestProduct::get()->byID($product->ID);
+
         // inventory control, no inventory left
-        $product->ControlInventory = true;
-        $product->PurchaseLimit = 10;
         $this->assertFalse($product->getIsProductAvailable());
     }
 
@@ -142,12 +148,17 @@ class ProductInventoryManagerTest extends SapphireTest
         /** @var TestProduct $product */
         $product = $this->objFromFixture(TestProduct::class, 'one');
         $this->assertEquals(0, $product->getNumberPurchased());
+
+        /** @var Order $order */
+        $order = $this->objFromFixture(Order::class, 'one');
+
         /** @var OrderDetail $detail */
         $detail = OrderDetail::create();
-        $detail->OrderID = $this->objFromFixture(Order::class, 'one')->ID;
+        $detail->OrderID = $order->ID;
         $detail->Quantity = 10;
         $detail->ProductID = $product->ID;
         $detail->write();
+
         $this->assertEquals(10, $product->getNumberPurchased());
     }
 

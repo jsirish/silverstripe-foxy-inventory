@@ -10,6 +10,7 @@ use SilverStripe\Forms\NumericField;
 use SilverStripe\Forms\ReadonlyField;
 use SilverStripe\ORM\DataExtension;
 use SilverStripe\ORM\DataList;
+use SilverStripe\ORM\ValidationResult;
 use UncleCheese\DisplayLogic\Forms\Wrapper;
 
 class ProductInventoryManager extends DataExtension
@@ -33,7 +34,7 @@ class ProductInventoryManager extends DataExtension
             'NumberPurchased',
         ]);
 
-        $fields->addFieldsToTab('Root.Inventory', array(
+        $fields->addFieldsToTab('Root.Inventory', [
             Wrapper::create(
                 CheckboxField::create('ControlInventory', 'Control Inventory?')
                     ->setDescription('limit the number of this product available for purchase'),
@@ -44,8 +45,21 @@ class ProductInventoryManager extends DataExtension
                     ReadonlyField::create('NumberAvailable', 'Remaining Available', $this->getNumberAvailable())
                         ->setDescription('This takes into account products added to the cart. Products removed from the cart may persist in the "Cart Reservations" until the expiration time.')//,
                 )->displayIf('ControlInventory')->isChecked()->end()
-            )->displayIf('Available')->isChecked()->end()
-        ));
+            )->displayIf('Available')->isChecked()->end(),
+        ]);
+    }
+
+    /**
+     * @param ValidationResult $validationResult
+     * @throws \SilverStripe\ORM\ValidationException
+     */
+    public function validate(ValidationResult $validationResult)
+    {
+        parent::validate($validationResult);
+
+        if ($this->owner->ControlInventory && $this->owner->PurchaseLimit == 0) {
+            $validationResult->addFieldError('PurchaseLimit', 'You must specify a purchase limit more than 0');
+        }
     }
 
     /**
@@ -62,7 +76,7 @@ class ProductInventoryManager extends DataExtension
     public function getIsProductAvailable()
     {
         if ($this->owner->getHasInventory()) {
-            return $this->owner->PurchaseLimit > $this->getNumberAvailable();
+            return $this->getNumberAvailable() > 0;
         }
 
         return true;
@@ -81,17 +95,7 @@ class ProductInventoryManager extends DataExtension
      */
     public function getNumberPurchased()
     {
-        $ct = 0;
-        if ($this->getOrders()) {
-            /** @var OrderDetail $order */
-            foreach ($this->getOrders() as $order) {
-                if ($order->OrderID !== 0) {
-                    $ct += $order->Quantity;
-                }
-            }
-        }
-
-        return $ct;
+        return OrderDetail::get()->filter('ProductID', $this->owner->ID)->sum('Quantity');
     }
 
     /**
@@ -111,9 +115,10 @@ class ProductInventoryManager extends DataExtension
      */
     public function getCartReservations()
     {
-        $reservations = CartReservation::get()->filter('ProductID', $this->owner->ID)
-            ->filter('Expires:GreaterThan', date('Y-m-d H:i:s', strtotime('now')));
-
-        return $reservations;
+        return CartReservation::get()
+            ->filter([
+                'ProductID' => $this->owner->ID,
+                'Expires:GreaterThan' => date('Y-m-d H:i:s', strtotime('now')),
+            ]);
     }
 }
