@@ -2,11 +2,13 @@
 
 namespace Dynamic\Foxy\Inventory\Extension;
 
+use Dynamic\Foxy\Form\QuantityField;
 use SilverStripe\Core\Extension;
 
 /**
  * Class QuantityFieldExtension
  * @package Dynamic\Foxy\Inventory\Extension
+ * @property-read QuantityField $owner
  */
 class QuantityFieldExtension extends Extension
 {

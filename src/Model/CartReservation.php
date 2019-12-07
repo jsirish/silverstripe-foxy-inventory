@@ -7,8 +7,20 @@ use SilverStripe\CMS\Model\SiteTree;
 use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\ReadonlyField;
 use SilverStripe\ORM\DataObject;
+use SilverStripe\ORM\FieldType\DBDatetime;
 use SilverStripe\Security\Permission;
+use SilverStripe\Security\Security;
 
+/**
+ * Class CartReservation
+ * @package Dynamic\Foxy\Inventory\Model
+ *
+ * @property int $ProductID
+ * @property int $CartProductID
+ * @property string $Code
+ * @property DBDatetime $Expires
+ * @property string $Cart
+ */
 class CartReservation extends DataObject
 {
     /**
@@ -30,34 +42,18 @@ class CartReservation extends DataObject
      * @var array
      */
     private static $db = [
-        'ReservationCode' => 'Varchar(255)',
+        'ProductID' => 'Int',
         'CartProductID' => 'Int',
         'Code' => 'Varchar(255)',
         'Expires' => 'DBDatetime',
-    ];
-
-    /**
-     * @var array
-     */
-    private static $has_one = [
-        'Product' => SiteTree::class,
-    ];
-
-    /**
-     * @var array
-     */
-    private static $indexes = [
-        'foxy-reservation-code' => [
-            'type' => 'unique',
-            'columns' => ['ReservationCode'],
-        ],
+        'Cart' => 'Varchar(255)',
     ];
 
     /**
      * @var array
      */
     private static $summary_fields = [
-        'ReservationCode' => 'Reservation',
+        'Cart' => 'Cart Reference',
         'Expires.Nice' => 'Expires',
     ];
 
@@ -111,7 +107,7 @@ class CartReservation extends DataObject
      */
     public function canDelete($member = null)
     {
-        return Permission::check('ADMIN', 'any', \Security::getCurrentUser());
+        return Permission::check('ADMIN', 'any', Security::getCurrentUser());
     }
 
     /**

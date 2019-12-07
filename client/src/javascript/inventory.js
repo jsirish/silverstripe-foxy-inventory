@@ -29,22 +29,31 @@ FC.onLoad = (function (_super) {
             _super.apply(this, arguments);
         }
 
-        FC.client.on('cart-submit.done', function () {
-            FC.client.request('https://' + FC.settings.storedomain + '/cart?output=json').done(function (dataJSON) {
-                jQuery.each(dataJSON.items, function (key, product) {
-                    if (product.expires > 0) {
-                        var code = product.parent_code === '' ? product.code : product.parent_code;
+        function updateReservations() {
+          FC.client.request('https://' + FC.settings.storedomain + '/cart?output=json').done(function (dataJSON) {
+            jQuery.each(dataJSON.items, function (key, product) {
+              if (product.expires > 0) {
+                var code = product.parent_code === '' ? product.code : product.parent_code;
 
-
-                        jQuery.ajax({
-                            url: fetchBase() + '/reserveproduct/?code=' + code + '&id=' + product.id + '&expires=' + product.expires,
-                            success: function (data) {
-                                //console.log(data);
-                            },
-                        });
-                    }
+                jQuery.ajax({
+                  url: fetchBase() + '/reserveproduct/?code=' + code + '&id=' + product.id +
+                    '&quantity=' + product.quantity + '&expires=' + product.expires +
+                    '&cart=' + FC.json.session_id,
+                  success: function (data) {
+                    //console.log(data);
+                  },
                 });
+              }
             });
+          });
+        }
+
+        FC.client.on('cart-submit.done', function () {
+          updateReservations();
         });
+
+      FC.client.wrap("cart-quantity-updated", function() {
+        updateReservations();
+      });
     };
 })(FC.onLoad);

@@ -15,6 +15,12 @@ Dynamic\Foxy\Orders\Model\Order:
   one:
     OrderTotal: '$20.00'
 
+#Dynamic\Foxy\Orders\Model\OrderDetail:
+#  one:
+#    Order: =>Dynamic\Foxy\Orders\Model\Order.one
+#    Quantity: 10
+#    Product: =>Dynamic\Foxy\Inventory\Test\TestOnly\Page\TestProduct.one
+
 Dynamic\Foxy\Model\OptionType:
   default:
     Title: 'Options'

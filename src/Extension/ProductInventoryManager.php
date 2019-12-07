@@ -2,12 +2,15 @@
 
 namespace Dynamic\Foxy\Inventory\Extension;
 
+use Dynamic\Foxy\Inventory\Model\CartReservation;
 use Dynamic\Foxy\Orders\Model\OrderDetail;
 use SilverStripe\Forms\CheckboxField;
 use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\NumericField;
 use SilverStripe\Forms\ReadonlyField;
 use SilverStripe\ORM\DataExtension;
+use SilverStripe\ORM\DataList;
+use SilverStripe\ORM\ValidationResult;
 use UncleCheese\DisplayLogic\Forms\Wrapper;
 
 class ProductInventoryManager extends DataExtension
@@ -31,7 +34,7 @@ class ProductInventoryManager extends DataExtension
             'NumberPurchased',
         ]);
 
-        $fields->addFieldsToTab('Root.Inventory', array(
+        $fields->addFieldsToTab('Root.Inventory', [
             Wrapper::create(
                 CheckboxField::create('ControlInventory', 'Control Inventory?')
                     ->setDescription('limit the number of this product available for purchase'),
@@ -39,10 +42,24 @@ class ProductInventoryManager extends DataExtension
                     NumericField::create('PurchaseLimit')
                         ->setTitle('Number Available')
                         ->setDescription('add to cart form will be disabled once number available equals purchased'),
-                    ReadonlyField::create('NumberPurchased', 'Purchased', $this->getNumberPurchased())//,
+                    ReadonlyField::create('NumberAvailable', 'Remaining Available', $this->getNumberAvailable())
+                        ->setDescription('This takes into account products added to the cart. Products removed from the cart may persist in the "Cart Reservations" until the expiration time.')//,
                 )->displayIf('ControlInventory')->isChecked()->end()
-            )->displayIf('Available')->isChecked()->end()
-        ));
+            )->displayIf('Available')->isChecked()->end(),
+        ]);
+    }
+
+    /**
+     * @param ValidationResult $validationResult
+     * @throws \SilverStripe\ORM\ValidationException
+     */
+    public function validate(ValidationResult $validationResult)
+    {
+        parent::validate($validationResult);
+
+        if ($this->owner->ControlInventory && $this->owner->PurchaseLimit == 0) {
+            $validationResult->addFieldError('PurchaseLimit', 'You must specify a purchase limit more than 0');
+        }
     }
 
     /**
@@ -59,19 +76,18 @@ class ProductInventoryManager extends DataExtension
     public function getIsProductAvailable()
     {
         if ($this->owner->getHasInventory()) {
-            return $this->owner->PurchaseLimit > $this->getNumberPurchased();
+            return $this->getNumberAvailable() > 0;
         }
+
         return true;
     }
 
     /**
-     * @return int
+     * @return int|void
      */
     public function getNumberAvailable()
     {
-        if ($this->getIsProductAvailable()) {
-            return (int)$this->owner->PurchaseLimit - (int)$this->getNumberPurchased();
-        }
+        return (int)$this->owner->PurchaseLimit - (int)$this->getNumberPurchased() - (int)$this->getCartReservations()->count();
     }
 
     /**
@@ -79,27 +95,30 @@ class ProductInventoryManager extends DataExtension
      */
     public function getNumberPurchased()
     {
-        $ct = 0;
-        if ($this->getOrders()) {
-            /** @var OrderDetail $order */
-            foreach ($this->getOrders() as $order) {
-                if ($order->OrderID !== 0) {
-                    $ct += $order->Quantity;
-                }
-            }
-        }
-
-        return $ct;
+        return OrderDetail::get()->filter('ProductID', $this->owner->ID)->sum('Quantity');
     }
 
     /**
-     * @return DataList
+     * @return DataList|bool
      */
     public function getOrders()
     {
         if ($this->owner->ID) {
             return OrderDetail::get()->filter('ProductID', $this->owner->ID);
         }
+
         return false;
+    }
+
+    /**
+     * @return DataList
+     */
+    public function getCartReservations()
+    {
+        return CartReservation::get()
+            ->filter([
+                'ProductID' => $this->owner->ID,
+                'Expires:GreaterThan' => date('Y-m-d H:i:s', strtotime('now')),
+            ]);
     }
 }

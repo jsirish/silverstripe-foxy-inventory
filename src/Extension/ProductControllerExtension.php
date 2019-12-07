@@ -42,44 +42,65 @@ class ProductControllerExtension extends Extension
 
     /**
      * @param HTTPRequest $request
+     * @return bool|void
+     * @throws \SilverStripe\ORM\ValidationException
      */
     public function reserveproduct(HTTPRequest $request)
     {
         $code = $request->getVar('code');
         $id = $request->getVar('id');
         $expires = $request->getVar('expires');
+        $quantity = $request->getVar('quantity');
+        $cart = $request->getVar('cart');
 
-        if (!$code || !$id || !$expires) {
+        if (!$code || !$id || !$expires || !$quantity || !$cart) {
             return false;
         }
 
-        if (!$this->isProductReserved($code, $id, $expires)) {
-            $this->addProductReservation($code, $id, $expires);
-        }
+        //if (!$this->isProductReserved($code, $id, $expires)) {
+            $this->addProductReservation($code, $id, $expires, $quantity, $cart);
+        //}
     }
 
     /**
      * @param $code
      * @param $id
      * @param $expires
-     * @return bool
+     * @param $quantity
+     * @param $cart
      * @throws \SilverStripe\ORM\ValidationException
      */
-    protected function addProductReservation($code, $id, $expires)
+    protected function addProductReservation($code, $id, $expires, $quantity, $cart)
     {
-        $helper = FoxyHelper::create();
-        $product = $helper->getProducts()->filter('Code', $code)->first();
+        $codeFilter = function (\Page $page) use ($code) {
+            return $page->Code == $code;
+        };
 
-        $reservation = CartReservation::create();
-        $reservation->ReservationCode = $this->getReservationHash($code, $id, $expires);
-        $reservation->CartProductID = $id;
-        $reservation->Code = $code;
-        $reservation->Expires = date('Y-m-d H:i:s', $expires);
-        if ($product !== null) {
-            $reservation->ProductID = $product->ID;
+        if ($product = FoxyHelper::singleton()->getProducts()->filterByCallback($codeFilter)->first()) {
+            $existing = CartReservation::get()
+                ->filter([
+                    'Cart' => $cart,
+                    'Code' => $code,
+                    'CartProductID' => $id,
+                    'ProductID' => $product->ID
+                ]);
+
+            $remaining = $quantity - $existing->count();
+
+            if ($remaining > 0) {
+                for ($i = 0; $i < $remaining; $i++) {
+                    $reservation = CartReservation::create();
+                    //$reservation->ReservationCode = $this->getReservationHash($code, $id, $expires, $cart);
+                    $reservation->CartProductID = $id;
+                    $reservation->Code = $code;
+                    $reservation->Expires = date('Y-m-d H:i:s', $expires);
+                    $reservation->ProductID = $product->ID;
+                    $reservation->Cart = $cart;
+
+                    $reservation->write();
+                }
+            }
         }
-
-        return $reservation->write() > 0;
     }
 
     /**
@@ -99,8 +120,8 @@ class ProductControllerExtension extends Extension
      * @param $expires
      * @return string
      */
-    protected function getReservationHash($code, $id, $expires)
+    protected function getReservationHash($code, $id, $expires, $cart)
     {
-        return md5($code.$id.$expires);
+        return md5($code . $id . $expires . $cart . rand());
     }
 }

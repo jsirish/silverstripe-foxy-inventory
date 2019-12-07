@@ -2,11 +2,15 @@
 
 namespace Dynamic\Foxy\Inventory\Test\Extension;
 
+use Dynamic\Foxy\Extension\Purchasable;
 use Dynamic\Foxy\Form\AddToCartForm;
 use Dynamic\Foxy\Inventory\Extension\AddToCartFormExtension;
+use Dynamic\Foxy\Inventory\Extension\ProductExpirationManager;
+use Dynamic\Foxy\Inventory\Extension\ProductInventoryManager;
 use Dynamic\Foxy\Inventory\Test\TestOnly\Form\TestAddToCartForm;
 use Dynamic\Foxy\Inventory\Test\TestOnly\Page\TestProduct;
 use Dynamic\Foxy\Inventory\Test\TestOnly\Page\TestProductController;
+use SilverStripe\Core\Config\Config;
 use SilverStripe\Dev\SapphireTest;
 use SilverStripe\Forms\FieldList;
 
@@ -30,7 +34,12 @@ class AddToCartFormExtensionTest extends SapphireTest
     protected static $required_extensions = [
         AddToCartForm::class => [
             AddToCartFormExtension::class,
-        ]
+        ],
+        TestProduct::class => [
+            Purchasable::class,
+            ProductInventoryManager::class,
+            ProductExpirationManager::class,
+        ],
     ];
 
     /**
@@ -39,6 +48,16 @@ class AddToCartFormExtensionTest extends SapphireTest
     protected static $extra_controllers = [
         TestProductController::class,
     ];
+
+    /**
+     *
+     */
+    protected function setUp()
+    {
+        parent::setUp();
+
+        Config::modify()->set('Dynamic\\Foxy\\SingleSignOn\\Client\\CustomerClient', 'foxy_sso_enabled', false);
+    }
 
     /**
      *
