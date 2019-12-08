@@ -19,7 +19,7 @@ class AddToCartFormExtension extends Extension
     {
         if ($this->owner->getProduct()->CartExpiration) {
             $fields->insertAfter(
-                'weight',
+                'code',
                 HiddenField::create('expires')
                     ->setValue(
                         AddToCartForm::getGeneratedValue(

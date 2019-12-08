@@ -50,7 +50,7 @@ class ProductExpirationManager extends DataExtension
             $expirationFields[] = $expirationGrid;
         }
         $fields->addFieldsToTab(
-            'Root.Inventory',
+            'Root.Ecommerce.Inventory',
             Wrapper::create(
                 $expirationFields
             )->displayIf('Available')->isChecked()->end()
@@ -64,7 +64,7 @@ class ProductExpirationManager extends DataExtension
                 $cartResConfig = GridFieldConfig_RecordViewer::create()
             );
             $expirationGrid->displayIf('ControlInventory')->isChecked()->end();
-            $fields->addFieldToTab('Root.Inventory', $expirationGrid);
+            $fields->addFieldToTab('Root.Ecommerce.Inventory', $expirationGrid);
         }
     }
 

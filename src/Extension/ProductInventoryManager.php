@@ -34,7 +34,7 @@ class ProductInventoryManager extends DataExtension
             'NumberPurchased',
         ]);
 
-        $fields->addFieldsToTab('Root.Inventory', [
+        $fields->addFieldsToTab('Root.Ecommerce.Inventory', array(
             Wrapper::create(
                 CheckboxField::create('ControlInventory', 'Control Inventory?')
                     ->setDescription('limit the number of this product available for purchase'),
@@ -45,8 +45,8 @@ class ProductInventoryManager extends DataExtension
                     ReadonlyField::create('NumberAvailable', 'Remaining Available', $this->getNumberAvailable())
                         ->setDescription('This takes into account products added to the cart. Products removed from the cart may persist in the "Cart Reservations" until the expiration time.')//,
                 )->displayIf('ControlInventory')->isChecked()->end()
-            )->displayIf('Available')->isChecked()->end(),
-        ]);
+            )->displayIf('Available')->isChecked()->end()
+        ));
     }
 
     /**
