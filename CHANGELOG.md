@@ -1,5 +1,17 @@
 # Changelog
 
+## [1.0.3](https://github.com/dynamic/silverstripe-foxy-inventory/tree/1.0.3) (2019-12-11)
+
+[Full Changelog](https://github.com/dynamic/silverstripe-foxy-inventory/compare/1.0.2...1.0.3)
+
+**Implemented enhancements:**
+
+- BUG Fix implentation of Cart Reservations [\#16](https://github.com/dynamic/silverstripe-foxy-inventory/issues/16)
+
+**Merged pull requests:**
+
+- REFACTOR CartReservation - decouple from has\_one SiteTree [\#20](https://github.com/dynamic/silverstripe-foxy-inventory/pull/20) ([jsirish](https://github.com/jsirish))
+
 ## [1.0.2](https://github.com/dynamic/silverstripe-foxy-inventory/tree/1.0.2) (2019-11-26)
 
 [Full Changelog](https://github.com/dynamic/silverstripe-foxy-inventory/compare/1.0.1...1.0.2)
