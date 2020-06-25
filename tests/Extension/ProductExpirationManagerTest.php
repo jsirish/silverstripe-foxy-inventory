@@ -7,6 +7,7 @@ use Dynamic\Foxy\Inventory\Extension\ProductExpirationManager;
 use Dynamic\Foxy\Inventory\Extension\ProductInventoryManager;
 use Dynamic\Foxy\Inventory\Model\CartReservation;
 use Dynamic\Foxy\Inventory\Test\TestOnly\Page\TestProduct;
+use Dynamic\Foxy\Model\Variation;
 use SilverStripe\Core\Config\Config;
 use SilverStripe\Dev\SapphireTest;
 use SilverStripe\Forms\FieldList;
@@ -45,6 +46,7 @@ class ProductExpirationManagerTest extends SapphireTest
         parent::setUp();
 
         Config::modify()->set('Dynamic\\Foxy\\SingleSignOn\\Client\\CustomerClient', 'foxy_sso_enabled', false);
+        Config::modify()->set(Variation::class, 'has_one', ['TestProduct' => TestProduct::class]);
     }
 
     /**

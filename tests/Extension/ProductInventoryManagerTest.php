@@ -7,6 +7,7 @@ use Dynamic\Foxy\Inventory\Extension\ProductExpirationManager;
 use Dynamic\Foxy\Inventory\Extension\ProductInventoryManager;
 use Dynamic\Foxy\Inventory\Test\TestOnly\Page\TestProduct;
 use Dynamic\Foxy\Inventory\Test\TestOnly\Page\TestProductController;
+use Dynamic\Foxy\Model\Variation;
 use Dynamic\Foxy\Orders\Model\Order;
 use Dynamic\Foxy\Orders\Model\OrderDetail;
 use SilverStripe\Core\Config\Config;
@@ -56,6 +57,7 @@ class ProductInventoryManagerTest extends SapphireTest
         parent::setUp();
 
         Config::modify()->set('Dynamic\\Foxy\\SingleSignOn\\Client\\CustomerClient', 'foxy_sso_enabled', false);
+        Config::modify()->set(Variation::class, 'has_one', ['TestProduct' => TestProduct::class]);
     }
 
     /**
