@@ -4,6 +4,10 @@
 
 [Full Changelog](https://github.com/dynamic/silverstripe-foxy-inventory/compare/1.0.3...1.1.0)
 
+**Closed issues:**
+
+- FEATURE Variation Inventory management [\#24](https://github.com/dynamic/silverstripe-foxy-inventory/issues/24)
+
 **Merged pull requests:**
 
 - FEATURE Variation Inventory Manager [\#25](https://github.com/dynamic/silverstripe-foxy-inventory/pull/25) ([jsirish](https://github.com/jsirish))
