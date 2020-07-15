@@ -11,6 +11,7 @@ use Dynamic\Foxy\Model\Variation;
 use Dynamic\Foxy\Orders\Model\Order;
 use Dynamic\Foxy\Orders\Model\OrderDetail;
 use SilverStripe\Core\Config\Config;
+use SilverStripe\Core\Injector\Injector;
 use SilverStripe\Dev\SapphireTest;
 use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\Form;
@@ -65,7 +66,7 @@ class ProductInventoryManagerTest extends SapphireTest
      */
     public function testUpdateCMSFields()
     {
-        $object = $this->objFromFixture(TestProduct::class, 'one');
+        $object = Injector::inst()->create(TestProduct::class);
         $fields = $object->getCMSFields();
         $this->assertInstanceOf(FieldList::class, $fields);
         $this->assertNotNull($fields->dataFieldByName('ControlInventory'));
@@ -77,7 +78,7 @@ class ProductInventoryManagerTest extends SapphireTest
     public function testFoxyStripePurchaseForm()
     {
         /** @var TestProduct $object */
-        $object = $this->objFromFixture(TestProduct::class, 'one');
+        $object = Injector::inst()->create(TestProduct::class);
         /** @var TestProductController $controller */
         $controller = TestProductController::create($object);
         $form = $controller->AddToCartForm();
@@ -90,7 +91,7 @@ class ProductInventoryManagerTest extends SapphireTest
     public function testGetHasInventory()
     {
         /** @var TestProduct $product */
-        $product = $this->objFromFixture(TestProduct::class, 'one');
+        $product = Injector::inst()->create(TestProduct::class);
         $product->ControlInventory = false;
         $product->PurchaseLimit = 0;
         $this->assertFalse($product->getHasInventory());
@@ -111,7 +112,7 @@ class ProductInventoryManagerTest extends SapphireTest
     public function testGetIsProductAvailable()
     {
         /** @var TestProduct $product */
-        $product = $this->objFromFixture(TestProduct::class, 'one');
+        $product = Injector::inst()->create(TestProduct::class);
         // no inventory control
         $product->ControlInventory = false;
         $product->PurchaseLimit = 0;
@@ -148,7 +149,8 @@ class ProductInventoryManagerTest extends SapphireTest
     public function testGetNumberPurchased()
     {
         /** @var TestProduct $product */
-        $product = $this->objFromFixture(TestProduct::class, 'one');
+        $product = Injector::inst()->create(TestProduct::class);
+        $product->write();
         $this->assertEquals(0, $product->getNumberPurchased());
 
         /** @var Order $order */
@@ -170,8 +172,9 @@ class ProductInventoryManagerTest extends SapphireTest
     public function testGetOrders()
     {
         /** @var TestProduct $product */
-        $product = $this->objFromFixture(TestProduct::class, 'one');
-        $this->assertEquals(0, $product->getOrders()->Count());
+        $product = Injector::inst()->create(TestProduct::class);
+        $product->write();
+        $this->assertEquals(0, $product->getOrders()->count());
         /** @var OrderDetail $detail */
         $detail = OrderDetail::create();
         $detail->OrderID = $this->objFromFixture(Order::class, 'one')->ID;

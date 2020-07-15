@@ -15,7 +15,7 @@
         }
     ],
     "require": {
-        "dynamic/silverstripe-foxy": "^1.0",
+        "dynamic/silverstripe-foxy": "^1.2",
         "dynamic/silverstripe-foxy-orders": "^1.0",
         "unclecheese/display-logic": "^2.0"
     },
@@ -34,6 +34,12 @@
             "Dynamic\\Foxy\\Inventory\\Test\\": "tests/"
         }
     },
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "git@github.com:mak001/silverstripe-groupable-gridfield.git"
+        }
+    ],
     "extra": {
         "expose": [
             "client/dist"

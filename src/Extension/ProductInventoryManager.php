@@ -8,6 +8,7 @@ use SilverStripe\Forms\CheckboxField;
 use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\NumericField;
 use SilverStripe\Forms\ReadonlyField;
+use SilverStripe\ORM\ArrayList;
 use SilverStripe\ORM\DataExtension;
 use SilverStripe\ORM\DataList;
 use SilverStripe\ORM\ValidationResult;
@@ -29,6 +30,7 @@ class ProductInventoryManager extends DataExtension
     public function updateCMSFields(FieldList $fields)
     {
         $fields->removeByName([
+            'ControlInventory',
             'PurchaseLimit',
             'EmbargoLimit',
             'NumberPurchased',
@@ -95,7 +97,13 @@ class ProductInventoryManager extends DataExtension
      */
     public function getNumberPurchased()
     {
-        return OrderDetail::get()->filter('ProductID', $this->owner->ID)->sum('Quantity');
+        $ct = 0;
+        if ($this->getOrders()) {
+            foreach ($this->getOrders() as $order) {
+                $ct += $order->Quantity;
+            }
+        }
+        return $ct;
     }
 
     /**
@@ -104,7 +112,21 @@ class ProductInventoryManager extends DataExtension
     public function getOrders()
     {
         if ($this->owner->ID) {
-            return OrderDetail::get()->filter('ProductID', $this->owner->ID);
+            $orderDetails = OrderDetail::get()->filter('ProductID', $this->owner->ID);
+            $orders = ArrayList::create();
+            foreach ($orderDetails as $orderDetail) {
+                $hasVariation = false;
+                foreach ($orderDetail->OrderVariations() as $variation) {
+                    if ($variation->VariationID > 0) {
+                        $hasVariation = true;
+                    }
+                }
+                if (!$hasVariation) {
+                    $orders->push($orderDetail);
+                }
+            }
+
+            return $orders;
         }
 
         return false;

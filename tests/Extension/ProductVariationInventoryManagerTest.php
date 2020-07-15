@@ -5,14 +5,18 @@ namespace Dynamic\Foxy\Inventory\Test\Extension;
 use Dynamic\Foxy\Extension\Purchasable;
 use Dynamic\Foxy\Inventory\Extension\ProductExpirationManager;
 use Dynamic\Foxy\Inventory\Extension\ProductInventoryManager;
-use Dynamic\Foxy\Inventory\Extension\ProductOptionInventoryManager;
+use Dynamic\Foxy\Inventory\Extension\ProductVariationInventoryManager;
 use Dynamic\Foxy\Inventory\Test\TestOnly\Model\TestProductOption;
+use Dynamic\Foxy\Inventory\Test\TestOnly\Model\TestVariation;
 use Dynamic\Foxy\Inventory\Test\TestOnly\Page\TestProduct;
 use SilverStripe\Core\Config\Config;
+use SilverStripe\Core\Injector\Injector;
 use SilverStripe\Dev\SapphireTest;
 use SilverStripe\Forms\FieldList;
 
-class ProductOptionInventoryManagerTest extends SapphireTest
+
+
+class ProductVariationInventoryManagerTest extends SapphireTest
 {
     /**
      * @var array
@@ -24,7 +28,7 @@ class ProductOptionInventoryManagerTest extends SapphireTest
      */
     protected static $extra_dataobjects = [
         TestProduct::class,
-        TestProductOption::class,
+        TestVariation::class,
     ];
 
     /**
@@ -36,8 +40,8 @@ class ProductOptionInventoryManagerTest extends SapphireTest
             ProductInventoryManager::class,
             ProductExpirationManager::class,
         ],
-        TestProductOption::class => [
-            ProductOptionInventoryManager::class,
+        TestVariation::class => [
+            ProductVariationInventoryManager::class,
         ],
     ];
 
@@ -56,7 +60,7 @@ class ProductOptionInventoryManagerTest extends SapphireTest
      */
     public function testUpdateCMSFields()
     {
-        $object = $this->objFromFixture(TestProductOption::class, 'one');
+        $object = Injector::inst()->create(TestProduct::class);
         $fields = $object->getCMSFields();
         $this->assertInstanceOf(FieldList::class, $fields);
     }
@@ -67,7 +71,7 @@ class ProductOptionInventoryManagerTest extends SapphireTest
     public function testGetHasInventory()
     {
         /** @var TestProductOption $option */
-        $option = $this->objFromFixture(TestProductOption::class, 'one');
+        $option = Injector::inst()->create(TestVariation::class);
         $option->ControlInventory = false;
         $option->PurchaseLimit = 0;
         $this->assertFalse($option->getHasInventory());
