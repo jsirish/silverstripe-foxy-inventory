@@ -1,5 +1,14 @@
 # Changelog
 
+## [1.1.0](https://github.com/dynamic/silverstripe-foxy-inventory/tree/1.1.0) (2020-07-15)
+
+[Full Changelog](https://github.com/dynamic/silverstripe-foxy-inventory/compare/1.0.3...1.1.0)
+
+**Merged pull requests:**
+
+- FEATURE Variation Inventory Manager [\#25](https://github.com/dynamic/silverstripe-foxy-inventory/pull/25) ([jsirish](https://github.com/jsirish))
+- BUGFIX ProductExpirationManagerTest - has\_one for Variation [\#23](https://github.com/dynamic/silverstripe-foxy-inventory/pull/23) ([jsirish](https://github.com/jsirish))
+
 ## [1.0.3](https://github.com/dynamic/silverstripe-foxy-inventory/tree/1.0.3) (2019-12-11)
 
 [Full Changelog](https://github.com/dynamic/silverstripe-foxy-inventory/compare/1.0.2...1.0.3)
