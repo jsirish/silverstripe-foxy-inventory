@@ -61,7 +61,7 @@ class AddToCartFormExtensionTest extends SapphireTest
         parent::setUp();
 
         Config::modify()->set(CustomerClient::class, 'foxy_sso_enabled', false);
-        Config::modify()->set(Variation::class, 'has_one', ['TestProduct' => TestProduct::class]);
+        Config::modify()->set(Variation::class, 'has_one', ['Product' => TestProduct::class]);
     }
 
     /**

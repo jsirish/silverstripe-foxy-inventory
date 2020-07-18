@@ -12,7 +12,7 @@ Dynamic\Foxy\Orders\Model\Order:
 #    Quantity: 10
 #    Product: =>Dynamic\Foxy\Inventory\Test\TestOnly\Page\TestProduct.one
 
-Dynamic\Foxy\Model\OptionType:
-  default:
-    Title: 'Options'
+#Dynamic\Foxy\Model\VariationType:
+#  default:
+#    Title: 'Options'
 

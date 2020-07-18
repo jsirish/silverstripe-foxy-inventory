@@ -34,12 +34,6 @@
             "Dynamic\\Foxy\\Inventory\\Test\\": "tests/"
         }
     },
-    "repositories": [
-        {
-            "type": "vcs",
-            "url": "git@github.com:mak001/silverstripe-groupable-gridfield.git"
-        }
-    ],
     "extra": {
         "expose": [
             "client/dist"
