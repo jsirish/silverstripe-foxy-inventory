@@ -58,7 +58,7 @@ class ProductInventoryManagerTest extends SapphireTest
         parent::setUp();
 
         Config::modify()->set('Dynamic\\Foxy\\SingleSignOn\\Client\\CustomerClient', 'foxy_sso_enabled', false);
-        Config::modify()->set(Variation::class, 'has_one', ['TestProduct' => TestProduct::class]);
+        Config::modify()->set(Variation::class, 'has_one', ['Product' => TestProduct::class]);
     }
 
     /**
