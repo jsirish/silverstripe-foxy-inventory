@@ -33,7 +33,7 @@ class ProductVariationInventoryManager extends ProductInventoryManager
     /**
      * @param $available
      */
-    public function updateAvailability(&$available)
+    public function updateGetIsAvailable(&$available)
     {
         if ($this->getHasInventory()) {
             $available = $this->getIsProductAvailable();
