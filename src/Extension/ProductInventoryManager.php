@@ -65,6 +65,23 @@ class ProductInventoryManager extends DataExtension
     }
 
     /**
+     * @param $available
+     */
+    public function updateGetIsAvailable(&$available)
+    {
+        if ($this->owner->Variations()->count()) {
+            foreach ($this->owner->Variations() as $variation) {
+                $available = false;
+                if ($variation->getIsAvailable()) {
+                    $available = true;
+                }
+            }
+        } elseif ($this->getHasInventory()) {
+            $available = $this->getIsProductAvailable();
+        }
+    }
+
+    /**
      * @return bool
      */
     public function getHasInventory()
