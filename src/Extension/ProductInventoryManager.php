@@ -23,6 +23,7 @@ class ProductInventoryManager extends DataExtension
         'ControlInventory' => 'Boolean',
         'PurchaseLimit' => 'Int',
         'NumberPurchased' => 'Int',
+        'InventorySync' => 'Datetime',
     ];
 
     /**

@@ -46,7 +46,8 @@ class InventoryTrackingTask extends BuildTask
         foreach ($products as $product) {
             $number_purchased_current = $product->NumberPurchased;
             $product->NumberPurchased = $product->getNumberPurchasedUpdate();
-            if ($number_purchased_current != $product->NumberPurchased) {
+            $product->InventorySync = date("Y-m-d H:i:s");
+            if ($number_purchased_current != $product->NumberPurchased && $product->InventorySync > strtotime( $product->InventorySync ) + 600) {
                 $product->write();
                 static::write_message($product->Title . ' number purchased updated to ' . $product->NumberPurchased);
             }
