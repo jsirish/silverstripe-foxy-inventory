@@ -22,6 +22,7 @@ class ProductInventoryManager extends DataExtension
     private static $db = [
         'ControlInventory' => 'Boolean',
         'PurchaseLimit' => 'Int',
+        'NumberPurchased' => 'Int',
     ];
 
     /**
@@ -44,6 +45,8 @@ class ProductInventoryManager extends DataExtension
                     NumericField::create('PurchaseLimit')
                         ->setTitle('Number Available')
                         ->setDescription('add to cart form will be disabled once number available equals purchased'),
+                    ReadonlyField::create('NumberPurchased', 'Number Purchased', $this->owner->NumberPurchased)
+                        ->setDescription('Number of products purchased all time'),
                     ReadonlyField::create('NumberAvailable', 'Remaining Available', $this->getNumberAvailable())
                         ->setDescription('This takes into account products added to the cart. Products removed from the cart may persist in the "Cart Reservations" until the expiration time.')//phpcs:ignore
                 )->displayIf('ControlInventory')->isChecked()->end()
@@ -106,15 +109,13 @@ class ProductInventoryManager extends DataExtension
      */
     public function getNumberAvailable()
     {
-        return (int)$this->owner->PurchaseLimit
-            - (int)$this->getNumberPurchased()
-            - (int)$this->getCartReservations()->count();
+        return (int)$this->owner->PurchaseLimit - (int)$this->owner->NumberPurchased - (int)$this->getCartReservations()->count();
     }
 
     /**
      * @return int
      */
-    public function getNumberPurchased()
+    public function getNumberPurchasedUpdate()
     {
         $ct = 0;
         if ($this->getOrders()) {

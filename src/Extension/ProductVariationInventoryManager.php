@@ -13,7 +13,31 @@ use SilverStripe\ORM\ArrayList;
 class ProductVariationInventoryManager extends ProductInventoryManager
 {
     /**
-     * @return ArrayList|bool
+     * @param $available
+     */
+    public function updateGetIsAvailable(&$available)
+    {
+        if ($this->getHasInventory()) {
+            $available = $this->getIsProductAvailable();
+        }
+    }
+
+    /**
+     * @return int
+     */
+    public function getNumberPurchasedUpdate()
+    {
+        $ct = 0;
+        if ($this->getOrders()) {
+            foreach ($this->getOrders() as $order) {
+                $ct += $order->Quantity;
+            }
+        }
+        return $ct;
+    }
+
+    /**
+     * @return DataList
      */
     public function getOrders()
     {
@@ -30,15 +54,5 @@ class ProductVariationInventoryManager extends ProductInventoryManager
             return isset($orders) ? $orders : false;
         }
         return false;
-    }
-
-    /**
-     * @param $available
-     */
-    public function updateGetIsAvailable(&$available)
-    {
-        if ($this->getHasInventory()) {
-            $available = $this->getIsProductAvailable();
-        }
     }
 }
