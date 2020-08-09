@@ -50,9 +50,12 @@ class InventoryTrackingTask extends BuildTask
 
             if ($product->Variations()->count()) {
                 foreach ($product->Variations() as $variation) {
+                    $variation->NumberPurchasedCurrent = $variation->NumberPurchased;
                     $variation->NumberPurchased = $variation->getNumberPurchasedUpdate();
-                    $variation->write();
-                    static::write_message($variation->Title . ' number purchased updated to ' . $variation->NumberPurchased);
+                    if ($variation->NumberPurchasedCurrent != $variation->NumberPurchased) {
+                        $variation->write();
+                        static::write_message($variation->Title . ' number purchased updated to ' . $variation->NumberPurchased);
+                    }
                 }
             }
         }
