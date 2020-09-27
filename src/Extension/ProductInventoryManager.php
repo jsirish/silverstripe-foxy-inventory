@@ -45,7 +45,7 @@ class ProductInventoryManager extends DataExtension
                         ->setTitle('Number Available')
                         ->setDescription('add to cart form will be disabled once number available equals purchased'),
                     ReadonlyField::create('NumberAvailable', 'Remaining Available', $this->getNumberAvailable())
-                        ->setDescription('This takes into account products added to the cart. Products removed from the cart may persist in the "Cart Reservations" until the expiration time.')//,
+                        ->setDescription('This takes into account products added to the cart. Products removed from the cart may persist in the "Cart Reservations" until the expiration time.')//phpcs:ignore
                 )->displayIf('ControlInventory')->isChecked()->end()
             )->displayIf('Available')->isChecked()->end(),
         ]);
@@ -106,7 +106,9 @@ class ProductInventoryManager extends DataExtension
      */
     public function getNumberAvailable()
     {
-        return (int)$this->owner->PurchaseLimit - (int)$this->getNumberPurchased() - (int)$this->getCartReservations()->count();
+        return (int)$this->owner->PurchaseLimit
+            - (int)$this->getNumberPurchased()
+            - (int)$this->getCartReservations()->count();
     }
 
     /**
