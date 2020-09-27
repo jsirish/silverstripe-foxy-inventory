@@ -3,6 +3,7 @@
 namespace Dynamic\Foxy\Inventory\Test\Extension;
 
 use Dynamic\Foxy\Extension\Purchasable;
+use Dynamic\Foxy\Extension\PurchasableExtension;
 use Dynamic\Foxy\Inventory\Extension\ProductExpirationManager;
 use Dynamic\Foxy\Inventory\Extension\ProductInventoryManager;
 use Dynamic\Foxy\Inventory\Test\TestOnly\Page\TestProduct;
@@ -40,6 +41,9 @@ class ProductInventoryManagerTest extends SapphireTest
             Purchasable::class,
             ProductInventoryManager::class,
             ProductExpirationManager::class,
+        ],
+        TestProductController::class => [
+            PurchasableExtension::class,
         ],
     ];
 
