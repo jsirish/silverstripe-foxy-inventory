@@ -7,6 +7,10 @@ use SilverStripe\Core\Extension;
 use SilverStripe\Forms\FieldList;
 use SilverStripe\Forms\HiddenField;
 
+/**
+ * Class AddToCartFormExtension
+ * @package Dynamic\Foxy\Inventory\Extension
+ */
 class AddToCartFormExtension extends Extension
 {
     /**

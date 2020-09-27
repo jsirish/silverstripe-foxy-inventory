@@ -111,7 +111,9 @@ class ProductControllerExtension extends Extension
      */
     protected function isProductReserved($code, $id, $expires)
     {
-        return CartReservation::get()->filter('ReservationCode', $this->getReservationHash($code, $id, $expires))->first();
+        return CartReservation::get()
+            ->filter('ReservationCode', $this->getReservationHash($code, $id, $expires))
+            ->first();
     }
 
     /**

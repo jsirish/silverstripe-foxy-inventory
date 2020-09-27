@@ -5,12 +5,15 @@ namespace Dynamic\Foxy\Inventory\Extension;
 use Dynamic\Foxy\Orders\Model\OrderDetail;
 use Dynamic\Foxy\Orders\Model\OrderVariation;
 use SilverStripe\ORM\ArrayList;
-use SilverStripe\ORM\DataList;
 
+/**
+ * Class ProductVariationInventoryManager
+ * @package Dynamic\Foxy\Inventory\Extension
+ */
 class ProductVariationInventoryManager extends ProductInventoryManager
 {
     /**
-     * @return DataList
+     * @return ArrayList|bool
      */
     public function getOrders()
     {
@@ -24,8 +27,7 @@ class ProductVariationInventoryManager extends ProductInventoryManager
                 }
             }
 
-            return $orders;
-
+            return isset($orders) ? $orders : false;
         }
         return false;
     }

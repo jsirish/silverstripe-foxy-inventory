@@ -6,6 +6,7 @@ use Dynamic\Foxy\Extension\Purchasable;
 use Dynamic\Foxy\Inventory\Extension\ProductExpirationManager;
 use Dynamic\Foxy\Inventory\Extension\ProductInventoryManager;
 use Dynamic\Foxy\Inventory\Model\CartReservation;
+use Dynamic\Foxy\Inventory\Test\TestOnly\Extension\TestVariationDataExtension;
 use Dynamic\Foxy\Inventory\Test\TestOnly\Page\TestProduct;
 use Dynamic\Foxy\Model\Variation;
 use SilverStripe\Core\Config\Config;
@@ -37,6 +38,9 @@ class ProductExpirationManagerTest extends SapphireTest
             ProductInventoryManager::class,
             ProductExpirationManager::class,
         ],
+        Variation::class => [
+            TestVariationDataExtension::class,
+        ],
     ];
 
     /**
@@ -46,8 +50,9 @@ class ProductExpirationManagerTest extends SapphireTest
     {
         parent::setUp();
 
-        Config::modify()->set('Dynamic\\Foxy\\SingleSignOn\\Client\\CustomerClient', 'foxy_sso_enabled', false);
-        Config::modify()->set(Variation::class, 'has_one', ['TestProduct' => TestProduct::class]);
+        if (class_exists('Dynamic\\Foxy\\SingleSignOn\\Client\\CustomerClient')) {
+            Config::modify()->set('Dynamic\\Foxy\\SingleSignOn\\Client\\CustomerClient', 'foxy_sso_enabled', false);
+        }
     }
 
     /**
