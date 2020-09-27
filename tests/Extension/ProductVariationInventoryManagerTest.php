@@ -6,15 +6,12 @@ use Dynamic\Foxy\Extension\Purchasable;
 use Dynamic\Foxy\Inventory\Extension\ProductExpirationManager;
 use Dynamic\Foxy\Inventory\Extension\ProductInventoryManager;
 use Dynamic\Foxy\Inventory\Extension\ProductVariationInventoryManager;
-use Dynamic\Foxy\Inventory\Test\TestOnly\Model\TestProductOption;
 use Dynamic\Foxy\Inventory\Test\TestOnly\Model\TestVariation;
 use Dynamic\Foxy\Inventory\Test\TestOnly\Page\TestProduct;
 use SilverStripe\Core\Config\Config;
 use SilverStripe\Core\Injector\Injector;
 use SilverStripe\Dev\SapphireTest;
 use SilverStripe\Forms\FieldList;
-
-
 
 class ProductVariationInventoryManagerTest extends SapphireTest
 {
@@ -70,7 +67,7 @@ class ProductVariationInventoryManagerTest extends SapphireTest
      */
     public function testGetHasInventory()
     {
-        /** @var TestProductOption $option */
+        /** @var TestVariation $option */
         $option = Injector::inst()->create(TestVariation::class);
         $option->ControlInventory = false;
         $option->PurchaseLimit = 0;
