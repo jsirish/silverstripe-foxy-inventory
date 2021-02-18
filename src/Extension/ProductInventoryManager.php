@@ -19,7 +19,7 @@ class ProductInventoryManager extends DataExtension
     /**
      * @var DataList|false|null
      */
-    private $orders = null;
+    protected $orders = null;
 
     /**
      * @var array
@@ -129,7 +129,7 @@ class ProductInventoryManager extends DataExtension
     /**
      * @return $this
      */
-    public function setOrders()
+    protected function setOrders()
     {
         $orders = OrderDetail::get()
             ->filter([

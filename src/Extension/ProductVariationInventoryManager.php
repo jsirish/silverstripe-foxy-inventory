@@ -37,22 +37,20 @@ class ProductVariationInventoryManager extends ProductInventoryManager
     }
 
     /**
-     * @return DataList
+     * @return $this|ProductVariationInventoryManager
      */
-    public function getOrders()
+    protected function setOrders()
     {
         if ($this->owner->ID) {
-            $orderVariations = OrderVariation::get()->filter('VariationID', $this->owner->ID);
-            if ($orderVariations) {
-                $orders = ArrayList::create();
-                foreach ($orderVariations as $orderVariation) {
-                    $orderDetail = OrderDetail::get()->byID($orderVariation->OrderDetailID);
-                    $orders->push($orderDetail);
-                }
-            }
+            if ($orderVariations = OrderVariation::get()->filter('VariationID', $this->owner->ID)) {
+                $this->orders = OrderDetail::get()->byIDs($orderVariations->column());
 
-            return isset($orders) ? $orders : false;
+                return $this;
+            }
         }
-        return false;
+
+        $this->orders = false;
+
+        return $this;
     }
 }
