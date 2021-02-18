@@ -17,6 +17,11 @@ use UncleCheese\DisplayLogic\Forms\Wrapper;
 class ProductInventoryManager extends DataExtension
 {
     /**
+     * @var DataList|false|null
+     */
+    private $orders = null;
+
+    /**
      * @var array
      */
     private static $db = [
@@ -46,7 +51,7 @@ class ProductInventoryManager extends DataExtension
                     NumericField::create('PurchaseLimit')
                         ->setTitle('Number Available')
                         ->setDescription('add to cart form will be disabled once number available equals purchased'),
-                    ReadonlyField::create('NumberPurchased', 'Number Purchased', $this->owner->NumberPurchased)
+                    ReadonlyField::create('NumberPurchased', 'Number Purchased', $this->getNumberPurchased())
                         ->setDescription('Number of products purchased all time'),
                     ReadonlyField::create('NumberAvailable', 'Remaining Available', $this->getNumberAvailable())
                         ->setDescription('This takes into account products added to the cart. Products removed from the cart may persist in the "Cart Reservations" until the expiration time.')//phpcs:ignore
@@ -110,21 +115,31 @@ class ProductInventoryManager extends DataExtension
      */
     public function getNumberAvailable()
     {
-        return (int)$this->owner->PurchaseLimit - (int)$this->owner->NumberPurchased - (int)$this->getCartReservations()->count();
+        return (int)$this->owner->PurchaseLimit - (int)$this->getNumberPurchased() - (int)$this->getCartReservations()->count();
     }
 
     /**
      * @return int
      */
-    public function getNumberPurchasedUpdate()
+    public function getNumberPurchased()
     {
-        $ct = 0;
-        if ($this->getOrders()) {
-            foreach ($this->getOrders() as $order) {
-                $ct += $order->Quantity;
-            }
-        }
-        return $ct;
+        return $this->getOrders() ? $this->getOrders()->sum('Quantity') : 0;
+    }
+
+    /**
+     * @return $this
+     */
+    public function setOrders()
+    {
+        $orders = OrderDetail::get()
+            ->filter([
+                'ProductID' => $this->owner->ID,
+                'OrderVariations.VariationID:GreaterThan' => 0,
+            ]);
+
+        $this->orders = $orders->count() ? $orders : false;
+
+        return $this;
     }
 
     /**
@@ -132,25 +147,11 @@ class ProductInventoryManager extends DataExtension
      */
     public function getOrders()
     {
-        if ($this->owner->ID) {
-            $orderDetails = OrderDetail::get()->filter('ProductID', $this->owner->ID);
-            $orders = ArrayList::create();
-            foreach ($orderDetails as $orderDetail) {
-                $hasVariation = false;
-                foreach ($orderDetail->OrderVariations() as $variation) {
-                    if ($variation->VariationID > 0) {
-                        $hasVariation = true;
-                    }
-                }
-                if (!$hasVariation) {
-                    $orders->push($orderDetail);
-                }
-            }
-
-            return $orders;
+        if ($this->orders === null) {
+            $this->setOrders();
         }
 
-        return false;
+        return $this->orders;
     }
 
     /**
